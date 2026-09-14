@@ -623,6 +623,8 @@ community:
         - src/catalog/locate.ts
         - src/search/rank.ts
         - src/skill.ts
+        - src/version.ts
+        - src/format/suggest.ts
       source_observations:
         - "bin/design-system-axi.ts answers bare -v/-V/--version through axi-sdk-js/fast-path with the leaf src/version.ts before dynamically importing src/cli.js; src/cli.ts registers components, component, find, sync, and setup through runAxiCli with getCommandHelp from src/help.ts (per-command usage and flags) and a `home` handler, so a bare run renders the content-first view instead of help text."
         - "src/commands/home.ts returns the design system, catalog age and sources, an installed-version `matches`/`mismatch` check with a sync warning, and per-status component counts; with no catalog it returns `catalog: none at <path>` plus sync help instead of an error. src/commands/components.ts emits name/status/from rows with a `total`, `excluded: N deprecated`, and `truncated: showing N of M (use --limit)` at DEFAULT_LIMIT = 100, and an explicit `result` when a status filter is empty."
