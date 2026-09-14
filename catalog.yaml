@@ -599,3 +599,34 @@ community:
         - "src/toon.ts encodes dashboard/list/show with @toon-format/toon; home summary carries active_frontiers/open_questions plus help[]; show accepts --full while truncate() caps body/reason/question text at 80 chars."
         - "src/args.ts requireNoUnknownFlags raises VALIDATION_ERROR on command paths; errors use axi-sdk-js exitCodeForError (VALIDATION_ERROR→2, else→1); add/done/cancel/reopen/promote are idempotent already-no-ops; promote blocks open questions unless --force and spawns tasks-axi via spawnSync argv (not shell)."
       exception: "src/toon.ts truncate()/renderShow truncates body/reason/question text to 80 chars with '...' only — no total-size hint and no --full help line when truncated (AXI principle 3); src/toon.ts renderActiveList empty path emits encode({ active: [] }) without definitive zero-results text (AXI principle 5)."
+  - name: design-system-axi
+    url: https://github.com/isamrish/design-system-axi
+    author: isamrish
+    domain: Design systems
+    description: "Look up components, import paths, props, and examples from a design system's Storybook manifest and metadata, with a deterministic `find` that marks weak matches - Primer React first."
+    admission:
+      status: admitted
+      reviewed_revision: a584548b919131286c0760204a006987af6b2fbe
+      reviewed_components:
+        - bin/design-system-axi.ts
+        - src/cli.ts
+        - src/help.ts
+        - src/args.ts
+        - src/errors.ts
+        - src/commands/home.ts
+        - src/commands/components.ts
+        - src/commands/component.ts
+        - src/commands/find.ts
+        - src/commands/sync.ts
+        - src/commands/setup.ts
+        - src/catalog/store.ts
+        - src/catalog/locate.ts
+        - src/search/rank.ts
+        - src/skill.ts
+      source_observations:
+        - "bin/design-system-axi.ts answers bare -v/-V/--version through axi-sdk-js/fast-path with the leaf src/version.ts before dynamically importing src/cli.js; src/cli.ts registers components, component, find, sync, and setup through runAxiCli with getCommandHelp from src/help.ts (per-command usage and flags) and a `home` handler, so a bare run renders the content-first view instead of help text."
+        - "src/commands/home.ts returns the design system, catalog age and sources, an installed-version `matches`/`mismatch` check with a sync warning, and per-status component counts; with no catalog it returns `catalog: none at <path>` plus sync help instead of an error. src/commands/components.ts emits name/status/from rows with a `total`, `excluded: N deprecated`, and `truncated: showing N of M (use --limit)` at DEFAULT_LIMIT = 100, and an explicit `result` when a status filter is empty."
+        - "src/commands/find.ts emits component/status/match/why rows (DEFAULT_LIMIT = 5); src/search/rank.ts derives `why` from the strongest field match and marks a match strong only for a direct query word in the name, a subcomponent name, or the description (IDENTITY_FIELDS), otherwise weak; find adds `result: no strong match ...` when every match is weak, `matches: []` with `result: no components match ...` when nothing matches, and `why_shown: evidence text shortened to 40 chars; run ... component <Name> for the full text` when rank.ts reports whyShortened."
+        - "src/commands/component.ts caps default props at PROP_LIMIT = 8 with `props_shown: 8 of N`, adds a `props_note` that inherited props may be missing, and reports every shortened field with a size hint and escape hatch - `description_shown: 299 of N chars (use --full)` past DESCRIPTION_LIMIT = 300, `example_shown` past EXAMPLE_LIMIT = 600, and `types_shown` when prop types exceed TYPE_LIMIT = 60; it lists subcomponents, related components, and duplicate-name `other_matches` with an `--id` hint, and `--full` returns untruncated descriptions, types, and every example with no hints."
+        - "src/args.ts parses flags with node:util parseArgs strict: true and converts misuse into VALIDATION_ERROR; src/errors.ts defines NO_CATALOG, NOT_FOUND (with edit-distance `did you mean`), SOURCE_UNREACHABLE, MANIFEST_SHAPE, and CATALOG_INVALID with suggestions; nothing prompts. Observed on the published 0.1.4 build of this revision: unknown flags, a missing intent, and --limit 0 exit 2; NOT_FOUND, NO_CATALOG, CATALOG_INVALID, and SOURCE_UNREACHABLE exit 1."
+        - "src/commands/sync.ts is the only network path; src/catalog/store.ts validates and writes the catalog to a temp file and renames it, and re-running sync against unchanged sources reports `changes: none` (observed), while an unreadable catalog is replaced and reported as such. src/catalog/locate.ts resolves the nearest catalog above the working directory. src/commands/setup.ts installs project or --user session-start hooks via installSessionStartHooks and reports per-agent status from sessionStartHookStatus; src/skill.ts generates a minimal SKILL.md that defers to `npx -y design-system-axi`."
